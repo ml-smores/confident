@@ -26,23 +26,25 @@ class TimePoints(list): #list of list of observations
     def correlated_variance_estimator(self):
         variance_timesteps = []
         for t in range(0, len(self)):
-            values = self.common_values(t, min(t-1, 0), t)
+            values = self.common_values(t)
+            values = values[min(t-1, 0): t] # is this necessary?
             cov_matrix = np.cov(values, bias=1)
 
-            C = 0
-            if np.size(cov_matrix) == 1:
-                C = cov_matrix
-            else:
-                C = np.sum(cov_matrix)
+            C = np.sum(cov_matrix)
             variance_timesteps.append( C)
         return variance_timesteps
             #print sum(cov_matrix)
 
-    def common_values(self, timestep, start, end):
+    def common_values(self, timestep):
+        '''
+        Returns a subset of the list only containing students that appear at timestep
+        :param timestep: The timestep to get common values from
+        :return:
+        '''
         ids = set( [o.id for o in self[timestep]]  )
 
         answer = []
-        for t in range(start, end+1):
+        for t in range(0, len(self)):
             timepoint = self[t]
             selected  = [o.value for o in timepoint if o.id in ids]
 

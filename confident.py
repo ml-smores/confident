@@ -45,7 +45,8 @@ class TimePoints(list): #list of list of observations
                 values = values[max(t-previous, 0): t+1] #TODO: How would it look like this?
 
             cov_matrix = np.cov(values, bias=1)
-            C = np.sum(cov_matrix) / len(values)
+
+            C = np.sum(cov_matrix) / len(values) #TODO: fix bug here... 
             #print cov_matrix
             variance_timesteps.append( C)
         return variance_timesteps

@@ -42,10 +42,11 @@ class TimePoints(list): #list of list of observations
             values = self.common_values_for_id(ids)
 
             if previous != None:
-                values = values[max(t-previous, 0): t+1]
+                values = values[max(t-previous, 0): t+1] #TODO: How would it look like this?
 
             cov_matrix = np.cov(values, bias=1)
-            C = np.sum(cov_matrix)
+            C = np.sum(cov_matrix) / len(values)
+            print cov_matrix
             variance_timesteps.append( C)
         return variance_timesteps
             #print sum(cov_matrix)
@@ -70,8 +71,8 @@ class TimePoints(list): #list of list of observations
 
 
 def main():
-    a = TimePoints([ [  Observation(1, 0), Observation(2, 1), Observation(3, 1), Observation(4, 1)],
-                     [  Observation(1, 0), Observation(2, 0), Observation(3, 0), Observation(4, 0)] ])
+    a = TimePoints([ [  Observation(1, 1), Observation(2, 0), Observation(3, 0), Observation(4, 0)],
+                     [  Observation(1, 1), Observation(2, 1), Observation(3, 0), Observation(4, 0)] ])
     print a.independent_sample_variance_estimator()
     print a.correlated_variance_estimator()
 

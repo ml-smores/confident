@@ -70,8 +70,8 @@ class TimePoints(list): #list of list of observations
 
 
 def main():
-    a = TimePoints([ [  Observation(1, 1), Observation(2, 0), Observation(3, 0), Observation(4, 0)],
-                     [  Observation(1, 1), Observation(2, 1), Observation(3, 1), Observation(4, 1)] ])
+    a = TimePoints([ [  Observation(1, 0), Observation(2, 1), Observation(3, 1), Observation(4, 1)],
+                     [  Observation(1, 0), Observation(2, 0), Observation(3, 0), Observation(4, 0)] ])
     print a.independent_sample_variance_estimator()
     print a.correlated_variance_estimator()
 

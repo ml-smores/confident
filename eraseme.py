@@ -6,6 +6,12 @@ import operator
 
 class Observation:
     def __init__(self, id, value):
+        '''
+
+        :param id: The id of the subject (student)
+        :param value: The value of the observation
+        :return:
+        '''
         self.id = id
         self.value  = value
 
@@ -16,42 +22,51 @@ class Observation:
 
 class TimePoints(list): #list of list of observations
 
-    @staticmethod
-    def get_values(timepoint):
-        return [o.value for o in  timepoint]
+
 
     def independent_sample_variance_estimator(self):
+        '''
+        Calculates the variance of a learning curve assuming every point is independent
+        :return: variance estimator
+        '''
         return  [np.var( TimePoints.get_values(timepoint) ) for timepoint in self]
 
-    def correlated_variance_estimator(self):
+    def correlated_variance_estimator(self, previous=1):
+        '''
+        Calculates the variance of a learning curve assuming dependence of previous timesteps
+        :return: variance estimator
+        '''
         variance_timesteps = []
         for t in range(0, len(self)):
-            values = self.common_values(t)
-            values = values[min(t-1, 0): t] # is this necessary?
-            cov_matrix = np.cov(values, bias=1)
+            ids = set( [o.id for o in self[t]] )
+            values = self.common_values_for_id(ids)
 
+            if previous != None:
+                values = values[max(t-previous, 0): t+1]
+
+            cov_matrix = np.cov(values, bias=1)
             C = np.sum(cov_matrix)
             variance_timesteps.append( C)
         return variance_timesteps
             #print sum(cov_matrix)
 
-    def common_values(self, timestep):
+    def common_values_for_id(self, ids):
         '''
-        Returns a subset of the list only containing students that appear at timestep
-        :param timestep: The timestep to get common values from
+        Returns the values of the observations that appear in id
+        :param ids: The ids that are selected
         :return:
         '''
-        ids = set( [o.id for o in self[timestep]]  )
 
         answer = []
-        for t in range(0, len(self)):
-            timepoint = self[t]
+        for timepoint in self:
             selected  = [o.value for o in timepoint if o.id in ids]
-
             answer.append(selected)
+
         return answer
 
-
+    @staticmethod
+    def get_values(timepoint):
+        return [o.value for o in  timepoint]
 
 
 def main():

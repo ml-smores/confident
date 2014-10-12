@@ -46,9 +46,16 @@ class TimePoints(list): #list of list of observations
 
             cov_matrix = np.cov(values, bias=1)
 
-            C = np.sum(cov_matrix) / len(values) #TODO: fix bug here... 
-            #print cov_matrix
-            variance_timesteps.append( C)
+            ind_var = np.var(TimePoints.get_values(self[t]))
+            bias = 0
+            print ">", cov_matrix
+            if np.size(cov_matrix) > 1:
+                for i in range(0, len(values)-1):
+                    bias += cov_matrix[i][len(values)-1] #TODO: multiply by two?
+
+            var = ind_var + bias  # independent variance + bias
+
+            variance_timesteps.append(var)
         return variance_timesteps
             #print sum(cov_matrix)
 

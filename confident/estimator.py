@@ -162,27 +162,3 @@ class TimePoints(list): #list of list of observations
         return [o.value for o in  timepoint]
 
 
-def main():
-    a = TimePoints([ [  Observation("a", 1), Observation("b", 0), Observation("c", 0), Observation("d", 0)],
-                     [  Observation("a", 1), Observation("b", 1), Observation("c", 0), Observation("d", 0)] ])
-    print "Independent:", a.independent_sample_variance_estimator()
-    print "Dependent:", a.foo(True)
-
-
-
-if __name__ == "__main__":
-    import sys
-
-    args = sys.argv
-    print args
-    cl = {}
-    for i in range(1, len(args)):  # index 0 is the filename
-        pair = args[i].split('=')
-        if pair[1].isdigit():
-            cl[pair[0]] = int(pair[1])
-        elif pair[1].lower() in ("true", "false"):
-            cl[pair[0]] = (pair[1].lower() == 'true')
-        else:
-            cl[pair[0]] = pair[1]
-
-    main(**cl)

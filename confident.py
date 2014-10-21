@@ -3,7 +3,8 @@ __author__ = 'Jose'
 import numpy as np
 import statsmodels.formula.api as smf
 import statsmodels.api as sm
-from collections import Counter
+import collections
+import itertools
 import operator
 import pymc as pm
 import matplotlib.pylab as pl
@@ -56,14 +57,11 @@ class TimePoints(list): #list of list of observations
         timestep_ids = []
         y = []
 
-        #for t in range(0, len(self)):
-        #    student_ids  +=  [o.id for o in self[t]]
-        #    timestep_ids +=  [t    for o in self[t]]
-        #    y            +=  [o.value for o in self[t]]
-
-        student_ids =  [0, 0, 0, 1, 1, 1]
-        timestep_ids = [0, 0, 0, 0, 0, 0]
-        y            = [0, 0, 0, 1, 0, 1]
+        ids = collections.defaultdict(itertools.count().next)
+        for t in range(0, len(self)):
+            student_ids  +=  [ids[o.id] for o in self[t]]
+            timestep_ids +=  [t         for o in self[t]]
+            y            +=  [o.value   for o in self[t]]
 
         n_students  =  len(set(student_ids))
         n_timesteps = len(self)
@@ -102,12 +100,12 @@ class TimePoints(list): #list of list of observations
             print "NUTS..."
             step = pm.NUTS(scaling=start)
             print "Samples..."
-            hierarchical_trace = pm.sample(1000, step, start=start, progressbar=False)
+            hierarchical_trace = pm.sample(2000, step, start=start, progressbar=False)
         print "done..."
         print "Plot..."
 
         pl.figure(figsize=(10,10))
-        f = pm.traceplot(hierarchical_trace)
+        f = pm.traceplot(hierarchical_trace[500:])
         f.savefig("a.png")
         return hierarchical_trace
 
@@ -165,8 +163,8 @@ class TimePoints(list): #list of list of observations
 
 
 def main():
-    a = TimePoints([ [  Observation(1, 1), Observation(2, 0), Observation(3, 0), Observation(4, 0)],
-                     [  Observation(1, 1), Observation(2, 1), Observation(3, 0), Observation(4, 0)] ])
+    a = TimePoints([ [  Observation("a", 1), Observation("b", 0), Observation("c", 0), Observation("d", 0)],
+                     [  Observation("a", 1), Observation("b", 1), Observation("c", 0), Observation("d", 0)] ])
     print "Independent:", a.independent_sample_variance_estimator()
     print "Dependent:", a.foo(True)
 
